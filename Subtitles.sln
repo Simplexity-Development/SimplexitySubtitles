@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeBuild", "CakeBuild\CakeBuild.csproj", "{FF408823-137E-4CBF-AABC-5C1C01E1F8BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subtitles", "Subtitles\Subtitles.csproj", "{7AF7DE44-7E49-4389-A5C3-C0449797EA61}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FF408823-137E-4CBF-AABC-5C1C01E1F8BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF408823-137E-4CBF-AABC-5C1C01E1F8BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF408823-137E-4CBF-AABC-5C1C01E1F8BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF408823-137E-4CBF-AABC-5C1C01E1F8BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AF7DE44-7E49-4389-A5C3-C0449797EA61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AF7DE44-7E49-4389-A5C3-C0449797EA61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AF7DE44-7E49-4389-A5C3-C0449797EA61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AF7DE44-7E49-4389-A5C3-C0449797EA61}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

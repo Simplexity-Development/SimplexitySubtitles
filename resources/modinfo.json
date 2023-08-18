@@ -1,0 +1,15 @@
+{
+  "type": "code",
+  "modid": "Simplexity.Subtitles",
+  "name": "Subtitles",
+  "authors": [
+    "goxmeor",
+    "Simplexity Development",
+    "Peashooter101"
+  ],
+  "description": "Adds directional subtitles to the game. (.NET 7)",
+  "version": "1.0.0",
+  "dependencies": {
+    "game": ""
+  }
+}
