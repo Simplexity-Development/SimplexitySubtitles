@@ -1,5 +1,6 @@
 {
   "type": "code",
+  "side": "Client",
   "modid": "Simplexity.Subtitles",
   "name": "Subtitles",
   "authors": [
