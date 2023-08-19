@@ -36,7 +36,7 @@ public class SubtitleBox : HudElement
 
 public class Subtitle : GuiElement
 {
-    // TODO: Is 15 necessary? Only 7 seem to ever show up at any given time.
+    // TODO: Is 15 necessary? Does the max actually shown depend on UI Scale?
     private static readonly int MAX_SOUNDS = 15;
     private static readonly int MAX_LIFESPAN_SECONDS = 4;
 
@@ -96,8 +96,6 @@ public class Subtitle : GuiElement
         const double X = 0;
         const double WIDTH = 300;
         const double HEIGHT = 30;
-        const double RIGHT_SIDE = 270;
-        const double LEFT_SIDE = 5;
         font.SetupContext(context);
 
         for (int i = 0; i < sounds.Count; i++)
@@ -121,23 +119,33 @@ public class Subtitle : GuiElement
             context.Fill();
 
             context.SetSourceRGBA(sound.color.R, sound.color.G, sound.color.B, brightness);
-            // TODO: Left (˂) and Right (˃) Sound Arrows
-            // TODO: Up (˄), Down (˅), Level (-) Sound Arrows
             textDrawUtil.DrawTextLine(context, font, sound.name, 150 - sound.textWidth / 2, y + 2);
 
-            if (Double.IsNaN(sound.yaw)) return;
-            
-            double soundYaw = sound.yaw;
-            double playerYaw = api.World.Player.CameraYaw;
-            double pi = GameMath.PI;
-            double dir = GameMath.Mod((soundYaw + playerYaw) / GameMath.TWOPI * 12, 12);
-            
-            if (dir >= 2 && dir <= 4) textDrawUtil.DrawTextLine(context, font, "˃˃", RIGHT_SIDE, y);
-            else if (dir >= 1 && dir <= 5) textDrawUtil.DrawTextLine(context, font, "˃", RIGHT_SIDE, y);
-            
-            if (dir >= 8 && dir <= 10) textDrawUtil.DrawTextLine(context, font, "˂˂", LEFT_SIDE, y);
-            else if (dir >= 7 && dir <= 11) textDrawUtil.DrawTextLine(context, font, "˂", LEFT_SIDE, y);
+            if (sound.location == null) return;
+
+            // TODO: Up (˄), Down (˅), Level (-) Sound Arrows
+            DrawYawArrows(context, sound, y);
         }
+    }
+    
+    public void DrawYawArrows(Context context, Sound sound, double y) {
+        const double RIGHT_SIDE = 270;
+        const double LEFT_SIDE = 5;
+            
+        // TODO: Make "right on top of you" distance configurable.
+        double dist = (sound.location - api.World.Player.Entity.Pos.XYZ).Length();
+        if (dist < 2) return;
+            
+        double soundYaw = Math.Atan2(sound.location.Z, sound.location.X);
+        double playerYaw = api.World.Player.CameraYaw;
+        double pi = GameMath.PI;
+        double dir = GameMath.Mod((soundYaw + playerYaw) / GameMath.TWOPI * 12, 12);
+            
+        if (dir >= 2 && dir <= 4) textDrawUtil.DrawTextLine(context, font, "»", RIGHT_SIDE, y);
+        else if (dir >= 1 && dir <= 5) textDrawUtil.DrawTextLine(context, font, "›", RIGHT_SIDE, y);
+            
+        if (dir >= 8 && dir <= 10) textDrawUtil.DrawTextLine(context, font, "«", LEFT_SIDE, y);
+        else if (dir >= 7 && dir <= 11) textDrawUtil.DrawTextLine(context, font, "‹", LEFT_SIDE, y);
     }
 
     public void AddSound(Sound sound)
@@ -151,7 +159,7 @@ public class Subtitle : GuiElement
             {
                 soundElement.age = sound.age;
                 soundElement.volume = sound.volume;
-                soundElement.yaw = sound.yaw;
+                soundElement.location = sound.location;
                 return;
             }
         }
@@ -172,16 +180,15 @@ public class Sound
     public double age;
     public string name;
     public double textWidth;
-    // TODO: Add pitch to allow vertical sound arrows.
-    public double yaw;
+    public Vec3d location;
     public double volume;
     public SoundType type;
     public Color color;
 
-    public Sound(string name, double yaw, double volume, SoundType type)
+    public Sound(string name, Vec3d location, double volume, SoundType type)
     {
         this.name = name;
-        this.yaw = yaw;
+        this.location = location;
         this.volume = volume;
         this.type = type;
         color = DetermineColor(this.type);

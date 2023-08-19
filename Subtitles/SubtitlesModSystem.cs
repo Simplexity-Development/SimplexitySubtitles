@@ -60,32 +60,15 @@ public class SubtitlesModSystem : ModSystem
 
         IClientPlayer player = api.World.Player;
         if (player == null) return;
-        Vec3d playerPos = player.Entity.Pos.XYZ;
-
-        if (sound.Position == null)
-        {
-            subtitleBox.AddSound(new Sound(soundName, Double.NaN, sound.Volume, type));
-            return;
-        }
-        
         Vec3d soundPos = sound.Position.ToVec3d();
-        Vec3d directionToSound = soundPos - playerPos;
-
-        // TODO: Make "on top of you" distance configurable.
-        if (directionToSound.Length() <= 1)
-        {
-            subtitleBox.AddSound(new Sound(soundName, Double.NaN, sound.Volume, type));
-            return;
-        }
-
-        double pitch = Math.Asin(directionToSound.Y);
-        double yaw = Math.Atan2(directionToSound.Z, directionToSound.X);
         
-        subtitleBox.AddSound(new Sound(soundName, yaw, sound.Volume, type));
+        subtitleBox.AddSound(new Sound(soundName, soundPos, sound.Volume, type));
     }
 
     public SoundType DetermineSoundType(SoundParams sound)
     {
+        // TODO: Allow a configuration to determine the sound type before this fallback.
+        
         // TODO: Maybe we do fancy things with these types?
         EnumSoundType enumSoundType = sound.SoundType;
         if (enumSoundType == EnumSoundType.Music) return SoundType.MUSIC;
