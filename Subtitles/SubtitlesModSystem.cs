@@ -54,6 +54,7 @@ public class SubtitlesModSystem : ModSystem
     public void ProcessSound(SoundParams sound, AudioData data)
     {
         if (subtitleBox == null) return;
+        if (sound.Volume == 0) return;
 
         IClientPlayer player = api.World.Player;
         if (player == null) return;

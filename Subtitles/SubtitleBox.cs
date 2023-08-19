@@ -112,6 +112,7 @@ public class Subtitle : GuiElement
             Sound sound = sounds[i];
             if (sound.textWidth < 0) sound.textWidth = context.TextExtents(sound.name).Width;
 
+            // sound.volume is always 0-1 so Math.Max() will always return 1.
             double brightness = (1 - sound.age / MAX_LIFESPAN_SECONDS) * Math.Max(1, sound.volume) / 2 + 0.5;
 
             context.SetSourceRGBA(0, 0, 0, 0.25 + brightness / 2);
@@ -129,8 +130,8 @@ public class Subtitle : GuiElement
     }
     
     public void DrawYawArrows(Context context, Sound sound, double y) {
-        const double RIGHT_SIDE = 270;
-        const double LEFT_SIDE = 5;
+        const double RIGHT_SIDE = 280;
+        const double LEFT_SIDE = 10;
             
         // TODO: Make "right on top of you" distance configurable.
         Vec3d dirVec = sound.location - api.World.Player.Entity.Pos.XYZ;
