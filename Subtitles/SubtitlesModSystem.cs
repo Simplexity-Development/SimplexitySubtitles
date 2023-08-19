@@ -6,6 +6,7 @@ using HarmonyLib;
 using Vintagestory.Client.NoObf;
 using Vintagestory.API.MathTools;
 using System.Text.RegularExpressions;
+using Vintagestory.API.Config;
 
 [assembly: ModInfo("SimplexityDev.Subtitles")]
 
@@ -60,15 +61,26 @@ public class SubtitlesModSystem : ModSystem
 
         IClientPlayer player = api.World.Player;
         if (player == null) return;
-        Vec3d soundPos = sound.Position.ToVec3d();
+        Vec3f soundPos3F = sound.Position;
+        if (soundPos3F == null)
+        {
+            subtitleBox.AddSound(new Sound(soundName, null, sound.Volume, type));
+            return;
+        }
+        Vec3d soundPos = soundPos3F.ToVec3d();
         
         subtitleBox.AddSound(new Sound(soundName, soundPos, sound.Volume, type));
     }
 
     public SoundType DetermineSoundType(SoundParams sound)
     {
-        // TODO: Allow a configuration to determine the sound type before this fallback.
-        return DetermineSoundTypeFallback(sound);
+        string lang = GetLang(sound);
+        if (lang == null) return DetermineSoundTypeFallback(sound);
+        int specialCharIndex = lang.IndexOf('$');
+        string typeSubstring = specialCharIndex == -1 ? null : lang.Substring(0, specialCharIndex);
+        SoundType type;
+        if (typeSubstring == null || SoundType.TryParse(typeSubstring, true, out type)) return DetermineSoundTypeFallback(sound);
+        return type;
     }
 
     public SoundType DetermineSoundTypeFallback(SoundParams sound)
@@ -91,9 +103,13 @@ public class SubtitlesModSystem : ModSystem
 
     public string DetermineSoundName(SoundParams sound)
     {
-        string soundPath = sound.Location.Path;
+        string lang = GetLang(sound);
+        if (lang == null) return DetermineSoundNameFallback(sound);
         // TODO: Utilize a lang file for names of sounds via key. I just wanted a fallback made first.
-        return DetermineSoundNameFallback(sound);
+        int specialCharIndex = lang.IndexOf('$');
+        if (specialCharIndex == -1) return lang;
+        // THREE$FOUR
+        return lang.Substring(specialCharIndex + 1, lang.Length - specialCharIndex - 1);
     }
 
     public string DetermineSoundNameFallback(SoundParams sound)
@@ -105,6 +121,13 @@ public class SubtitlesModSystem : ModSystem
         name = name.Replace("_", " ");
         name = textInfo.ToTitleCase(name);
         return name;
+    }
+
+    public string GetLang(SoundParams sound)
+    {
+        string lang = Lang.GetIfExists("subtitles:" + sound.Location.Path);
+        if (sound.Location.Path == lang) return null;
+        return lang;
     }
 
     public override void Dispose()
