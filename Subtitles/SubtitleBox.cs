@@ -155,7 +155,7 @@ public class Subtitle : GuiElement
         
         foreach (Sound soundElement in sounds)
         {
-            if (soundElement.name == sound.name)
+            if (soundElement.Equals(sound))
             {
                 soundElement.age = sound.age;
                 soundElement.volume = sound.volume;
@@ -178,11 +178,11 @@ public class Sound
 {
     // TODO: Swap age with a decrementing feature so some sounds messages can optionally last longer.
     public double age;
-    public string name;
+    public readonly string name;
     public double textWidth;
     public Vec3d location;
     public double volume;
-    public SoundType type;
+    public readonly SoundType type;
     public Color color;
 
     public Sound(string name, Vec3d location, double volume, SoundType type)
@@ -238,6 +238,18 @@ public class Sound
             default:
                 return SoundColor.DARK_GRAY;
         }
+    }
+
+    public override bool Equals(Object obj)
+    {
+        if (obj == null || !(GetType() == obj.GetType())) return false;
+        Sound sound = (Sound) obj;
+        return name == sound.name && type == sound.type;
+    }
+
+    public override int GetHashCode()
+    {
+        return name.GetHashCode() ^ type.GetHashCode();
     }
 }
 

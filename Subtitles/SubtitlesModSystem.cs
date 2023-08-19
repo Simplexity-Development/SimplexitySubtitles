@@ -68,7 +68,11 @@ public class SubtitlesModSystem : ModSystem
     public SoundType DetermineSoundType(SoundParams sound)
     {
         // TODO: Allow a configuration to determine the sound type before this fallback.
-        
+        return DetermineSoundTypeFallback(sound);
+    }
+
+    public SoundType DetermineSoundTypeFallback(SoundParams sound)
+    {
         // TODO: Maybe we do fancy things with these types?
         EnumSoundType enumSoundType = sound.SoundType;
         if (enumSoundType == EnumSoundType.Music) return SoundType.MUSIC;
@@ -89,7 +93,12 @@ public class SubtitlesModSystem : ModSystem
     {
         string soundPath = sound.Location.Path;
         // TODO: Utilize a lang file for names of sounds via key. I just wanted a fallback made first.
-        Match m = Regex.Match(soundPath, REGEX_SOUND_NAME, RegexOptions.Singleline);
+        return DetermineSoundNameFallback(sound);
+    }
+
+    public string DetermineSoundNameFallback(SoundParams sound)
+    {
+        Match m = Regex.Match(sound.Location.Path, REGEX_SOUND_NAME, RegexOptions.Singleline);
         if (!m.Success) return "Unknown Sound";
         string name = m.Groups[1].Value;
         name = name.Replace("-", " ");
