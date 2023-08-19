@@ -1,8 +1,10 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using Vintagestory.API.Common;
 using Vintagestory.API.Client;
 using HarmonyLib;
 using Vintagestory.Client.NoObf;
+using Vintagestory.API.MathTools;
 using System.Text.RegularExpressions;
 
 [assembly: ModInfo("SimplexityDev.Subtitles")]
@@ -56,7 +58,30 @@ public class SubtitlesModSystem : ModSystem
         SoundType type = DetermineSoundType(sound);
         string soundName = DetermineSoundName(sound);
 
-        subtitleBox.AddSound(new Sound(soundName, 0, 1, type));
+        IClientPlayer player = api.World.Player;
+        if (player == null) return;
+        Vec3d playerPos = player.Entity.Pos.XYZ;
+
+        if (sound.Position == null)
+        {
+            subtitleBox.AddSound(new Sound(soundName, Double.NaN, sound.Volume, type));
+            return;
+        }
+        
+        Vec3d soundPos = sound.Position.ToVec3d();
+        Vec3d directionToSound = soundPos - playerPos;
+
+        // TODO: Make "on top of you" distance configurable.
+        if (directionToSound.Length() <= 1)
+        {
+            subtitleBox.AddSound(new Sound(soundName, Double.NaN, sound.Volume, type));
+            return;
+        }
+
+        double pitch = Math.Asin(directionToSound.Y);
+        double yaw = Math.Atan2(directionToSound.Z, directionToSound.X);
+        
+        subtitleBox.AddSound(new Sound(soundName, yaw, sound.Volume, type));
     }
 
     public SoundType DetermineSoundType(SoundParams sound)

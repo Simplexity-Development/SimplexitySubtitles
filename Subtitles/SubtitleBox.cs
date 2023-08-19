@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Vintagestory.API.Client;
 using Cairo;
+using Vintagestory.API.MathTools;
 
 namespace Subtitles;
 
@@ -95,6 +96,8 @@ public class Subtitle : GuiElement
         const double X = 0;
         const double WIDTH = 300;
         const double HEIGHT = 30;
+        const double RIGHT_SIDE = 270;
+        const double LEFT_SIDE = 5;
         font.SetupContext(context);
 
         for (int i = 0; i < sounds.Count; i++)
@@ -118,14 +121,30 @@ public class Subtitle : GuiElement
             context.Fill();
 
             context.SetSourceRGBA(sound.color.R, sound.color.G, sound.color.B, brightness);
-            // TODO: Left (⮘) and Right (⮚) Sound Arrows
-            // TODO: Up (⮙), Down (⮛), Level (-) Sound Arrows
+            // TODO: Left (˂) and Right (˃) Sound Arrows
+            // TODO: Up (˄), Down (˅), Level (-) Sound Arrows
             textDrawUtil.DrawTextLine(context, font, sound.name, 150 - sound.textWidth / 2, y + 2);
+
+            if (Double.IsNaN(sound.yaw)) return;
+            
+            double soundYaw = sound.yaw;
+            double playerYaw = api.World.Player.CameraYaw;
+            double pi = GameMath.PI;
+            double dir = GameMath.Mod((soundYaw + playerYaw) / GameMath.TWOPI * 12, 12);
+            
+            if (dir >= 2 && dir <= 4) textDrawUtil.DrawTextLine(context, font, "˃˃", RIGHT_SIDE, y);
+            else if (dir >= 1 && dir <= 5) textDrawUtil.DrawTextLine(context, font, "˃", RIGHT_SIDE, y);
+            
+            if (dir >= 8 && dir <= 10) textDrawUtil.DrawTextLine(context, font, "˂˂", LEFT_SIDE, y);
+            else if (dir >= 7 && dir <= 11) textDrawUtil.DrawTextLine(context, font, "˂", LEFT_SIDE, y);
         }
     }
 
     public void AddSound(Sound sound)
     {
+        // TODO: Make configurable which sounds are to be hidden.
+        if (sound.type == SoundType.UNKNOWN) return;
+        
         foreach (Sound soundElement in sounds)
         {
             if (soundElement.name == sound.name)
@@ -168,7 +187,7 @@ public class Sound
         color = DetermineColor(this.type);
 
         // TODO: Let the music message last longer.
-        if (this.type == SoundType.MUSIC) this.name = "♫" + this.name + "♫";
+        if (this.type == SoundType.MUSIC) this.name = "♫ " + this.name + " ♫";
 
         age = 0;
         textWidth = -1;
@@ -180,29 +199,33 @@ public class Sound
         switch (type)
         {
             case SoundType.UNKNOWN:
+                return SoundColor.DARK_GRAY;
+            case SoundType.AMBIENT:
                 return SoundColor.GRAY;
             case SoundType.BLOCK:
-                return SoundColor.WHITE;
+                return SoundColor.GRAY;
             case SoundType.CREATURE:
-                return SoundColor.RED;
+                return SoundColor.YELLOW;
             case SoundType.EFFECT:
-                return SoundColor.DARK_AQUA;
+                return SoundColor.LIGHT_PURPLE;
             case SoundType.ENVIRONMENT:
                 return SoundColor.WHITE;
+            case SoundType.GLITCHED:
+                return SoundColor.LIGHT_PURPLE;
             case SoundType.HELD:
-                return SoundColor.WHITE;
+                return SoundColor.GRAY;
             case SoundType.MUSIC:
-                return SoundColor.BLUE;
+                return SoundColor.DARK_GRAY;
             case SoundType.PLAYER:
-                return SoundColor.DARK_GREEN;
-            case SoundType.TOOL:
                 return SoundColor.WHITE;
+            case SoundType.TOOL:
+                return SoundColor.GRAY;
             case SoundType.VOICE:
                 return SoundColor.AQUA;
             case SoundType.WALK:
                 return SoundColor.GRAY;
             case SoundType.WEARABLE:
-                return SoundColor.GRAY;
+                return SoundColor.WHITE;
             case SoundType.WEATHER:
                 return SoundColor.GRAY;
             default:
