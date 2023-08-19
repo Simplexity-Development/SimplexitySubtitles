@@ -133,10 +133,11 @@ public class Subtitle : GuiElement
         const double LEFT_SIDE = 5;
             
         // TODO: Make "right on top of you" distance configurable.
-        double dist = (sound.location - api.World.Player.Entity.Pos.XYZ).Length();
+        Vec3d dirVec = sound.location - api.World.Player.Entity.Pos.XYZ;
+        double dist = dirVec.Length();
         if (dist < 2) return;
             
-        double soundYaw = Math.Atan2(sound.location.Z, sound.location.X);
+        double soundYaw = Math.Atan2(dirVec.Z, dirVec.X);
         double playerYaw = api.World.Player.CameraYaw;
         double pi = GameMath.PI;
         double dir = GameMath.Mod((soundYaw + playerYaw) / GameMath.TWOPI * 12, 12);

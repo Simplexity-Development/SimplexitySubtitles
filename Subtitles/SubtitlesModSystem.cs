@@ -54,20 +54,21 @@ public class SubtitlesModSystem : ModSystem
     public void ProcessSound(SoundParams sound, AudioData data)
     {
         if (subtitleBox == null) return;
-        if (sound.SoundType == EnumSoundType.Music) return;
-
-        SoundType type = DetermineSoundType(sound);
-        string soundName = DetermineSoundName(sound);
 
         IClientPlayer player = api.World.Player;
         if (player == null) return;
         Vec3f soundPos3F = sound.Position;
+
+        SoundType type = DetermineSoundType(sound);
+        string soundName = DetermineSoundName(sound);
+        
         if (soundPos3F == null)
         {
             subtitleBox.AddSound(new Sound(soundName, null, sound.Volume, type));
             return;
         }
         Vec3d soundPos = soundPos3F.ToVec3d();
+        if ((player.Entity.Pos.XYZ - soundPos).Length() > sound.Range) return;
         
         subtitleBox.AddSound(new Sound(soundName, soundPos, sound.Volume, type));
     }
