@@ -6,7 +6,8 @@
   "authors": [
     "goxmeor",
     "Simplexity Development",
-    "Peashooter101"
+    "Peashooter101",
+    "RhythmicSys"
   ],
   "description": "Adds directional subtitles to the game. (.NET 7)",
   "version": "1.1.0",
