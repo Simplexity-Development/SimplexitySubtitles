@@ -223,8 +223,14 @@ public class Sound
                 return SoundColor.LIGHT_PURPLE;
             case SoundType.HELD:
                 return SoundColor.GRAY;
+            case SoundType.HOSTILE:
+                return SoundColor.RED;
+            case SoundType.MENU:
+                return SoundColor.GRAY;
             case SoundType.MUSIC:
                 return SoundColor.DARK_GRAY;
+            case SoundType.PASSIVE:
+                return SoundColor.GREEN;
             case SoundType.PLAYER:
                 return SoundColor.WHITE;
             case SoundType.TOOL:
@@ -233,6 +239,8 @@ public class Sound
                 return SoundColor.AQUA;
             case SoundType.WALK:
                 return SoundColor.GRAY;
+            case SoundType.WARNING:
+                return SoundColor.RED;
             case SoundType.WEARABLE:
                 return SoundColor.WHITE;
             case SoundType.WEATHER:

@@ -20,6 +20,7 @@ public enum SoundType
     TOOL,
     VOICE,
     WALK,
+    WARNING,        // Not in sounds directory, manually assigned in the lang file.
     WEARABLE,
     WEATHER
 }
