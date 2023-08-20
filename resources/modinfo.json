@@ -9,7 +9,7 @@
     "Peashooter101"
   ],
   "description": "Adds directional subtitles to the game. (.NET 7)",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "dependencies": {
     "game": ""
   }
